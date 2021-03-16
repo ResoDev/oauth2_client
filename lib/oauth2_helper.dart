@@ -22,7 +22,7 @@ class OAuth2Helper {
   static const IMPLICIT_GRANT = 3;
 
   final OAuth2Client client;
-  TokenStorage? tokenStorage;
+  late TokenStorage tokenStorage;
 
   int grantType;
   String? clientId;
@@ -43,11 +43,11 @@ class OAuth2Helper {
       this.scopes,
       this.enablePKCE = true,
       this.enableState = true,
-      this.tokenStorage,
+      TokenStorage? tokenStorage,
       this.afterAuthorizationCodeCb,
       this.authCodeParams,
       this.accessTokenParams}) {
-    tokenStorage ??= TokenStorage(client.tokenUrl);
+    tokenStorage = tokenStorage ?? TokenStorage(client.tokenUrl);
   }
 
   /// Sets the proper parameters for requesting an authorization token.
@@ -106,7 +106,7 @@ class OAuth2Helper {
 
   /// Returns the previously stored Access Token from the storage, if any
   Future<AccessTokenResponse?> getTokenFromStorage() async {
-    return await tokenStorage!.getToken(scopes);
+    return await tokenStorage.getToken(scopes);
   }
 
   /// Fetches a new token and saves it in the storage
@@ -137,7 +137,7 @@ class OAuth2Helper {
     }
 
     if (tknResp != null && tknResp.isValid()) {
-      await tokenStorage!.addToken(tknResp);
+      await tokenStorage.addToken(tknResp);
     }
 
     return tknResp;
@@ -161,11 +161,11 @@ class OAuth2Helper {
       if (!tknResp.hasRefreshToken()) {
         tknResp.refreshToken = refreshToken;
       }
-      await tokenStorage!.addToken(tknResp);
+      await tokenStorage.addToken(tknResp);
     } else {
       if (tknResp.error == 'invalid_grant') {
         //The refresh token is expired too
-        await tokenStorage!.deleteToken(scopes);
+        await tokenStorage.deleteToken(scopes);
         //Fetch another access token
         tknResp = await getToken();
       } else {
@@ -181,10 +181,10 @@ class OAuth2Helper {
   Future<OAuth2Response> disconnect({httpClient}) async {
     httpClient ??= http.Client();
 
-    final tknResp = await tokenStorage!.getToken(scopes);
+    final tknResp = await tokenStorage.getToken(scopes);
 
     if (tknResp != null) {
-      await tokenStorage!.deleteToken(scopes);
+      await tokenStorage.deleteToken(scopes);
       return await client.revokeToken(tknResp,
           clientId: clientId,
           clientSecret: clientSecret,
