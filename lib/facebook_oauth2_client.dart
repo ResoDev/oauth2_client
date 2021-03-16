@@ -7,7 +7,7 @@ import 'package:meta/meta.dart';
 ///
 class FacebookOAuth2Client extends OAuth2Client {
   FacebookOAuth2Client(
-      {@required String redirectUri, @required String customUriScheme})
+      {required String redirectUri, required String customUriScheme})
       : super(
             authorizeUrl: 'https://www.facebook.com/v5.0/dialog/oauth',
             tokenUrl: 'https://graph.facebook.com/oauth/access_token',

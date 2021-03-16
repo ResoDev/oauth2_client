@@ -21,10 +21,10 @@ class OAuth2Utils {
   }
 
   static String params2qs(Map params) {
-    final qsList = <String>[];
+    final qsList = <String?>[];
 
     params.forEach((k, v) {
-      String val;
+      String? val;
       if (v is List) {
         val = v.map((p) => p.trim()).join('+');
       } else {

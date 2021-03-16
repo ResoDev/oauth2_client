@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:oauth2_client/access_token_response.dart';
 import 'package:oauth2_client/oauth2_client.dart';
 import 'package:oauth2_client/oauth2_exception.dart';
@@ -166,7 +166,7 @@ void main() {
 
       var hlp = OAuth2Helper(oauth2Client, tokenStorage: tokenStorage);
 
-      when(httpClient.post('https://my.test.url',
+      when(httpClient.post(Uri.parse('https://my.test.url'),
               body: null, headers: {'Authorization': 'Bearer ' + accessToken}))
           .thenAnswer(
               (_) async => http.Response('{"error": "invalid_token"}', 401));
@@ -182,7 +182,7 @@ void main() {
       expect(tknResp.isValid(), true);
       expect(tknResp.accessToken, accessToken);
 
-      await hlp.post('https://my.test.url', httpClient: httpClient);
+      await hlp.post(Uri.parse('https://my.test.url'), httpClient: httpClient);
       tknResp = await hlp.getToken();
 
       expect(tknResp.isValid(), true);
@@ -223,7 +223,7 @@ void main() {
 
       var hlp = OAuth2Helper(oauth2Client, tokenStorage: tokenStorage);
 
-      when(httpClient.get('https://my.test.url',
+      when(httpClient.get(Uri.parse('https://my.test.url'),
               headers: {'Authorization': 'Bearer ' + accessToken}))
           .thenAnswer(
               (_) async => http.Response('{"error": "invalid_token"}', 401));
@@ -239,7 +239,7 @@ void main() {
       expect(tknResp.isValid(), true);
       expect(tknResp.accessToken, accessToken);
 
-      await hlp.get('https://my.test.url', httpClient: httpClient);
+      await hlp.get(Uri.parse('https://my.test.url'), httpClient: httpClient);
       tknResp = await hlp.getToken();
 
       expect(tknResp.isValid(), true);
@@ -278,7 +278,7 @@ void main() {
 
       clearInteractions(httpClient);
 
-      when(httpClient.get('https://my.test.url',
+      when(httpClient.get(Uri.parse('https://my.test.url'),
               headers: captureAnyNamed('headers')))
           .thenAnswer(
               (_) async => http.Response('{"error": "invalid_token"}', 401));
@@ -291,11 +291,11 @@ void main() {
           clientSecret: clientSecret,
           scopes: scopes);
 
-      await hlp.get('https://my.test.url',
+      await hlp.get(Uri.parse('https://my.test.url'),
           httpClient: httpClient, headers: {'TestHeader': 'test'});
 
       expect(
-          verify(httpClient.get('https://my.test.url',
+          verify(httpClient.get(Uri.parse('https://my.test.url'),
                   headers: captureAnyNamed('headers')))
               .captured[0],
           {'TestHeader': 'test', 'Authorization': 'Bearer test_token_renewed'});
@@ -310,7 +310,7 @@ void main() {
 
       clearInteractions(httpClient);
 
-      when(httpClient.get('https://my.test.url',
+      when(httpClient.get(Uri.parse('https://my.test.url'),
               headers: captureAnyNamed('headers')))
           .thenAnswer(
               (_) async => http.Response('{"error": "invalid_token"}', 401));
@@ -323,10 +323,10 @@ void main() {
           clientSecret: clientSecret,
           scopes: scopes);
 
-      await hlp.get('https://my.test.url', httpClient: httpClient);
+      await hlp.get(Uri.parse('https://my.test.url'), httpClient: httpClient);
 
       expect(
-          verify(httpClient.get('https://my.test.url',
+          verify(httpClient.get(Uri.parse('https://my.test.url'),
                   headers: captureAnyNamed('headers')))
               .captured[0],
           {'Authorization': 'Bearer test_token_renewed'});
@@ -341,7 +341,7 @@ void main() {
 
       clearInteractions(httpClient);
 
-      when(httpClient.post('https://my.test.url',
+      when(httpClient.post(Uri.parse('https://my.test.url'),
               headers: captureAnyNamed('headers')))
           .thenAnswer(
               (_) async => http.Response('{"error": "invalid_token"}', 401));
@@ -354,11 +354,11 @@ void main() {
           clientSecret: clientSecret,
           scopes: scopes);
 
-      await hlp.post('https://my.test.url',
+      await hlp.post(Uri.parse('https://my.test.url'),
           httpClient: httpClient, headers: {'TestHeader': 'test'});
 
       expect(
-          verify(httpClient.post('https://my.test.url',
+          verify(httpClient.post(Uri.parse('https://my.test.url'),
                   headers: captureAnyNamed('headers')))
               .captured[0],
           {'TestHeader': 'test', 'Authorization': 'Bearer test_token_renewed'});
@@ -373,7 +373,7 @@ void main() {
 
       clearInteractions(httpClient);
 
-      when(httpClient.post('https://my.test.url',
+      when(httpClient.post(Uri.parse('https://my.test.url'),
               headers: captureAnyNamed('headers')))
           .thenAnswer(
               (_) async => http.Response('{"error": "invalid_token"}', 401));
@@ -386,10 +386,10 @@ void main() {
           clientSecret: clientSecret,
           scopes: scopes);
 
-      await hlp.post('https://my.test.url', httpClient: httpClient);
+      await hlp.post(Uri.parse('https://my.test.url'), httpClient: httpClient);
 
       expect(
-          verify(httpClient.post('https://my.test.url',
+          verify(httpClient.post(Uri.parse('https://my.test.url'),
                   headers: captureAnyNamed('headers')))
               .captured[0],
           {'Authorization': 'Bearer test_token_renewed'});
@@ -404,7 +404,7 @@ void main() {
 
       clearInteractions(httpClient);
 
-      when(httpClient.put('https://my.test.url',
+      when(httpClient.put(Uri.parse('https://my.test.url'),
               headers: captureAnyNamed('headers')))
           .thenAnswer(
               (_) async => http.Response('{"error": "invalid_token"}', 401));
@@ -417,10 +417,10 @@ void main() {
           clientSecret: clientSecret,
           scopes: scopes);
 
-      await hlp.put('https://my.test.url', httpClient: httpClient);
+      await hlp.put(Uri.parse('https://my.test.url'), httpClient: httpClient);
 
       expect(
-          verify(httpClient.put('https://my.test.url',
+          verify(httpClient.put(Uri.parse('https://my.test.url'),
                   headers: captureAnyNamed('headers')))
               .captured[0],
           {'Authorization': 'Bearer test_token_renewed'});
@@ -435,7 +435,7 @@ void main() {
 
       clearInteractions(httpClient);
 
-      when(httpClient.patch('https://my.test.url',
+      when(httpClient.patch(Uri.parse('https://my.test.url'),
               headers: captureAnyNamed('headers')))
           .thenAnswer(
               (_) async => http.Response('{"error": "invalid_token"}', 401));
@@ -448,10 +448,10 @@ void main() {
           clientSecret: clientSecret,
           scopes: scopes);
 
-      await hlp.patch('https://my.test.url', httpClient: httpClient);
+      await hlp.patch(Uri.parse('https://my.test.url'), httpClient: httpClient);
 
       expect(
-          verify(httpClient.patch('https://my.test.url',
+          verify(httpClient.patch(Uri.parse('https://my.test.url'),
                   headers: captureAnyNamed('headers')))
               .captured[0],
           {'Authorization': 'Bearer test_token_renewed'});
@@ -466,7 +466,7 @@ void main() {
 
       clearInteractions(httpClient);
 
-      when(httpClient.delete('https://my.test.url',
+      when(httpClient.delete(Uri.parse('https://my.test.url'),
               headers: captureAnyNamed('headers')))
           .thenAnswer(
               (_) async => http.Response('{"error": "invalid_token"}', 401));
@@ -479,11 +479,11 @@ void main() {
           clientSecret: clientSecret,
           scopes: scopes);
 
-      await hlp.delete('https://my.test.url',
+      await hlp.delete(Uri.parse('https://my.test.url'),
           httpClient: httpClient, headers: {'TestHeader': 'test'});
 
       expect(
-          verify(httpClient.delete('https://my.test.url',
+          verify(httpClient.delete(Uri.parse('https://my.test.url'),
                   headers: captureAnyNamed('headers')))
               .captured[0],
           {'TestHeader': 'test', 'Authorization': 'Bearer test_token_renewed'});
@@ -498,7 +498,7 @@ void main() {
 
       clearInteractions(httpClient);
 
-      when(httpClient.delete('https://my.test.url',
+      when(httpClient.delete(Uri.parse('https://my.test.url'),
               headers: captureAnyNamed('headers')))
           .thenAnswer(
               (_) async => http.Response('{"error": "invalid_token"}', 401));
@@ -511,10 +511,11 @@ void main() {
           clientSecret: clientSecret,
           scopes: scopes);
 
-      await hlp.delete('https://my.test.url', httpClient: httpClient);
+      await hlp.delete(Uri.parse('https://my.test.url'),
+          httpClient: httpClient);
 
       expect(
-          verify(httpClient.delete('https://my.test.url',
+          verify(httpClient.delete(Uri.parse('https://my.test.url'),
                   headers: captureAnyNamed('headers')))
               .captured[0],
           {'Authorization': 'Bearer test_token_renewed'});
@@ -529,7 +530,7 @@ void main() {
 
       clearInteractions(httpClient);
 
-      when(httpClient.head('https://my.test.url',
+      when(httpClient.head(Uri.parse('https://my.test.url'),
               headers: captureAnyNamed('headers')))
           .thenAnswer(
               (_) async => http.Response('{"error": "invalid_token"}', 401));
@@ -542,10 +543,10 @@ void main() {
           clientSecret: clientSecret,
           scopes: scopes);
 
-      await hlp.head('https://my.test.url', httpClient: httpClient);
+      await hlp.head(Uri.parse('https://my.test.url'), httpClient: httpClient);
 
       expect(
-          verify(httpClient.head('https://my.test.url',
+          verify(httpClient.head(Uri.parse('https://my.test.url'),
                   headers: captureAnyNamed('headers')))
               .captured[0],
           {'Authorization': 'Bearer test_token_renewed'});
@@ -561,7 +562,7 @@ void main() {
         'http_status_code': 200
       });
 
-      final tokenStorage = TokenStorageMock();
+      final tokenStorage = MockTokenStorage();
       when(tokenStorage.getToken(scopes)).thenAnswer((_) async => tknResp);
       when(tokenStorage.deleteToken(scopes)).thenAnswer((_) async => true);
 
@@ -586,7 +587,7 @@ void main() {
 
     test('Token revocation without a previously fetched token (fallback)',
         () async {
-      final tokenStorage = TokenStorageMock();
+      final tokenStorage = MockTokenStorage();
       when(tokenStorage.getToken(scopes)).thenAnswer((_) async => null);
 
       final hlp = OAuth2Helper(oauth2Client,
@@ -740,7 +741,7 @@ void main() {
 
       var hlp = OAuth2Helper(oauth2Client, tokenStorage: tokenStorage);
 
-      when(httpClient.post('https://my.test.url',
+      when(httpClient.post(Uri.parse('https://my.test.url'),
               body: null, headers: {'Authorization': 'Bearer ' + accessToken}))
           .thenAnswer(
               (_) async => http.Response('{"error": "invalid_token"}', 401));
@@ -756,7 +757,7 @@ void main() {
       expect(tknResp.isValid(), true);
       expect(tknResp.accessToken, accessToken);
 
-      await hlp.post('https://my.test.url', httpClient: httpClient);
+      await hlp.post(Uri.parse('https://my.test.url'), httpClient: httpClient);
       tknResp = await hlp.getToken();
 
       expect(tknResp.isValid(), true);

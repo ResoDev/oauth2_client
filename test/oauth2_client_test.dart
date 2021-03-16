@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:oauth2_client/access_token_response.dart';
 import 'package:oauth2_client/oauth2_client.dart';
 import 'package:oauth2_client/src/oauth2_utils.dart';
@@ -52,11 +52,11 @@ void main() {
         'code_challenge_method': 'S256'
       };
 
-      when(webAuthClient.authenticate(
+      when(() =>
+          webAuthClient.authenticate(
               url: OAuth2Utils.addParamsToUrl(authorizeUrl, authParams),
-              callbackUrlScheme: customUriScheme))
-          .thenAnswer((_) async =>
-              redirectUri + '?code=' + authCode + '&state=' + state);
+              callbackUrlScheme: customUriScheme)).thenAnswer(
+          (_) async => redirectUri + '?code=' + authCode + '&state=' + state);
 
       final authResponse = await oauth2Client.requestAuthorization(
           webAuthClient: webAuthClient,
@@ -82,8 +82,8 @@ void main() {
         'code_verifier': codeVerifier,
       };
 
-      when(httpClient.post(tokenUrl,
-              body: tokenParams, headers: captureAnyNamed('headers')))
+      when(() => httpClient.post(Uri.parse(tokenUrl),
+              body: tokenParams, headers: captureAny(named: 'headers')))
           .thenAnswer((_) async => http.Response(
               '{"access_token": "' +
                   accessToken +
@@ -99,9 +99,9 @@ void main() {
           codeVerifier: codeVerifier);
 
       expect(
-          verify(httpClient.post(tokenUrl,
-                  body: tokenParams, headers: captureAnyNamed('headers')))
-              .captured[0],
+          verify(() => httpClient.post(Uri.parse(tokenUrl),
+              body: tokenParams,
+              headers: captureAny(named: 'headers'))).captured[0],
           {});
 
       expect(tknResponse.accessToken, accessToken);
@@ -123,8 +123,8 @@ void main() {
         'code_verifier': codeVerifier,
       };
 
-      when(httpClient.post(tokenUrl,
-              body: tokenParams, headers: captureAnyNamed('headers')))
+      when(httpClient.post(Uri.parse(tokenUrl),
+              body: tokenParams, headers: captureAny(named: 'headers')))
           .thenAnswer((_) async => http.Response(
               '{"access_token": "' +
                   accessToken +
@@ -140,8 +140,8 @@ void main() {
           codeVerifier: codeVerifier);
 
       expect(
-          verify(httpClient.post(tokenUrl,
-                  body: tokenParams, headers: captureAnyNamed('headers')))
+          verify(httpClient.post(Uri.parse(tokenUrl),
+                  body: tokenParams, headers: captureAny(named: 'headers')))
               .captured[0],
           {'test': '42'});
 
@@ -162,8 +162,8 @@ void main() {
         // 'client_secret': clientSecret
       };
 
-      when(httpClient.post(tokenUrl,
-              body: tokenParams, headers: captureAnyNamed('headers')))
+      when(httpClient.post(Uri.parse(tokenUrl),
+              body: tokenParams, headers: captureAny(named: 'headers')))
           .thenAnswer((_) async => http.Response('', 404));
 
       final tknResponse = await oauth2Client.requestAccessToken(
@@ -202,8 +202,8 @@ void main() {
         // 'client_secret': clientSecret
       };
 
-      when(httpClient.post(tokenUrl,
-              body: tokenParams, headers: captureAnyNamed('headers')))
+      when(httpClient.post(Uri.parse(tokenUrl),
+              body: tokenParams, headers: captureAny(named: 'headers')))
           .thenAnswer((_) async => http.Response(
               '{"access_token": "' +
                   accessToken +
@@ -256,7 +256,7 @@ void main() {
       };
 
       when(httpClient.post('https://test.token.url',
-              body: tokenParams, headers: captureAnyNamed('headers')))
+              body: tokenParams, headers: captureAny(named: 'headers')))
           .thenAnswer((_) async => http.Response(
               '{"access_token": "' +
                   accessToken +
@@ -295,7 +295,7 @@ void main() {
                 'grant_type': 'refresh_token',
                 'refresh_token': refreshToken,
               },
-              headers: captureAnyNamed('headers')))
+              headers: captureAny(named: 'headers')))
           .thenAnswer((_) async => http.Response(
               '{"access_token": "' +
                   accessToken +
@@ -311,8 +311,8 @@ void main() {
 
       expect(
           verify(httpClient.post(tokenUrl,
-                  body: captureAnyNamed('body'),
-                  headers: captureAnyNamed('headers')))
+                  body: captureAny(named: 'body'),
+                  headers: captureAny(named: 'headers')))
               .captured[1],
           {'Authorization': 'Basic bXljbGllbnRpZDp0ZXN0X3NlY3JldA=='});
 
@@ -328,7 +328,7 @@ void main() {
                 'grant_type': 'refresh_token',
                 'refresh_token': refreshToken,
               },
-              headers: captureAnyNamed('headers')))
+              headers: captureAny(named: 'headers')))
           .thenAnswer((_) async => http.Response('', 404));
 
       var resp = await oauth2Client.refreshToken(refreshToken,
@@ -338,8 +338,8 @@ void main() {
 
       expect(
           verify(httpClient.post(tokenUrl,
-                  body: captureAnyNamed('body'),
-                  headers: captureAnyNamed('headers')))
+                  body: captureAny(named: 'body'),
+                  headers: captureAny(named: 'headers')))
               .captured[1],
           {'Authorization': 'Basic bXljbGllbnRpZDp0ZXN0X3NlY3JldA=='});
 
@@ -550,7 +550,7 @@ void main() {
       };
 
       when(httpClient.post(tokenUrl,
-              body: authParams, headers: captureAnyNamed('headers')))
+              body: authParams, headers: captureAny(named: 'headers')))
           .thenAnswer((_) async => http.Response(
               '{"access_token": "' +
                   accessToken +
@@ -567,8 +567,8 @@ void main() {
 
       expect(
           verify(httpClient.post(tokenUrl,
-                  body: captureAnyNamed('body'),
-                  headers: captureAnyNamed('headers')))
+                  body: captureAny(named: 'body'),
+                  headers: captureAny(named: 'headers')))
               .captured[1],
           {'Authorization': 'Basic bXljbGllbnRpZDp0ZXN0X3NlY3JldA=='});
 
@@ -584,7 +584,7 @@ void main() {
       };
 
       when(httpClient.post(tokenUrl,
-              body: authParams, headers: captureAnyNamed('headers')))
+              body: authParams, headers: captureAny(named: 'headers')))
           .thenAnswer((_) async => http.Response('', 404));
 
       final tknResponse = await oauth2Client.getTokenWithClientCredentialsFlow(
@@ -595,8 +595,8 @@ void main() {
 
       expect(
           verify(httpClient.post(tokenUrl,
-                  body: captureAnyNamed('body'),
-                  headers: captureAnyNamed('headers')))
+                  body: captureAny(named: 'body'),
+                  headers: captureAny(named: 'headers')))
               .captured[1],
           {'Authorization': 'Basic bXljbGllbnRpZDp0ZXN0X3NlY3JldA=='});
 
