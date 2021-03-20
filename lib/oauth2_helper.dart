@@ -47,7 +47,7 @@ class OAuth2Helper {
       this.afterAuthorizationCodeCb,
       this.authCodeParams,
       this.accessTokenParams}) {
-    tokenStorage = tokenStorage ?? TokenStorage(client.tokenUrl);
+    this.tokenStorage = tokenStorage ?? TokenStorage(client.tokenUrl);
   }
 
   /// Sets the proper parameters for requesting an authorization token.
