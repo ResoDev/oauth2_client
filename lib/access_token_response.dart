@@ -66,11 +66,11 @@ class AccessTokenResponse extends OAuth2Response {
     }
   }
 
-  factory AccessTokenResponse.fromHttpResponse(http.Response response,
+  factory AccessTokenResponse.fromHttpResponse(http.Response? response,
       {requestedScopes}) {
     AccessTokenResponse resp;
 
-    if (response.statusCode != 404) {
+    if (response != null && response.statusCode != 404) {
       Map respMap = jsonDecode(response.body);
       //From Section 4.2.2. (Access Token Response) of OAuth2 rfc, the "scope" parameter in the Access Token Response is
       //"OPTIONAL, if identical to the scope requested by the client; otherwise, REQUIRED."
@@ -85,7 +85,7 @@ class AccessTokenResponse extends OAuth2Response {
       resp = AccessTokenResponse.fromMap(respMap as Map<String, dynamic>);
     } else {
       resp = AccessTokenResponse();
-      resp.httpStatusCode = response.statusCode;
+      resp.httpStatusCode = response?.statusCode;
     }
 
     return resp;
