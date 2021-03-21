@@ -60,12 +60,9 @@ class OAuth2Client {
     List<String>? scopes,
     bool enableState = true,
     String? state,
-    httpClient,
-    webAuthClient,
+    required http.Client httpClient,
+    required WebAuth webAuthClient,
   }) async {
-    httpClient ??= http.Client();
-    webAuthClient ??= this.webAuthClient;
-
     if (enableState) state ??= randomAlphaNumeric(25);
 
     final authorizeUrl = getAuthorizeUrl(
@@ -78,7 +75,7 @@ class OAuth2Client {
 
     // Present the dialog to the user
     final result = await webAuthClient.authenticate(
-        url: authorizeUrl, callbackUrlScheme: customUriScheme);
+        url: authorizeUrl.toString(), callbackUrlScheme: customUriScheme);
 
     final fragment = Uri.splitQueryString(Uri.parse(result).fragment);
 
@@ -111,8 +108,8 @@ class OAuth2Client {
     Function? afterAuthorizationCodeCb,
     Map<String, dynamic>? authCodeParams,
     Map<String, dynamic>? accessTokenParams,
-    httpClient,
-    webAuthClient,
+    required http.Client httpClient,
+    required WebAuth webAuthClient,
   }) async {
     AccessTokenResponse? tknResp;
 
@@ -178,10 +175,8 @@ class OAuth2Client {
     bool enableState = true,
     String? state,
     Map<String, dynamic>? customParams,
-    webAuthClient,
+    required WebAuth webAuthClient,
   }) async {
-    webAuthClient ??= this.webAuthClient;
-
     if (enableState) {
       state ??= randomAlphaNumeric(25);
     }
@@ -197,7 +192,7 @@ class OAuth2Client {
 
     // Present the dialog to the user
     final result = await webAuthClient.authenticate(
-        url: authorizeUrl, callbackUrlScheme: customUriScheme);
+        url: authorizeUrl.toString(), callbackUrlScheme: customUriScheme);
 
     return AuthorizationResponse.fromRedirectUri(result, state);
   }
@@ -353,9 +348,7 @@ class OAuth2Client {
       String? clientSecret,
       Map? params,
       Map<String, String>? headers,
-      httpClient}) async {
-    httpClient ??= http.Client();
-
+      required http.Client httpClient}) async {
     headers ??= {};
 
     //If a client secret has been specified, it will be sent in the "Authorization" header instead of a body parameter...
@@ -418,12 +411,14 @@ class OAuth2Client {
   /// Revokes the specified token [type] in the [tknResp]
   Future<OAuth2Response> _revokeTokenByType(
       AccessTokenResponse tknResp, String tokenType,
-      {String? clientId, String? clientSecret, httpClient}) async {
+      {String? clientId,
+      String? clientSecret,
+      required http.Client httpClient}) async {
     var resp = OAuth2Response();
 
-    if (revokeUrl == null) return resp;
+    final revokeUrl = this.revokeUrl;
 
-    httpClient ??= http.Client();
+    if (revokeUrl == null) return resp;
 
     var token = tokenType == 'access_token'
         ? tknResp.accessToken
@@ -435,7 +430,7 @@ class OAuth2Client {
       if (clientId != null) params['client_id'] = clientId;
       if (clientSecret != null) params['client_secret'] = clientSecret;
 
-      http.Response response = await httpClient.post(revokeUrl, body: params);
+      final response = await httpClient.post(revokeUrl, body: params);
 
       resp = OAuth2Response.fromHttpResponse(response);
     }
