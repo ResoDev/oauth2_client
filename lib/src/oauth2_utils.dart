@@ -20,7 +20,7 @@ class OAuth2Utils {
     return codeChallenge;
   }
 
-  static String params2qs(Map params) {
+  static String? params2qs(Map params) {
     final qsList = <String?>[];
 
     params.forEach((k, v) {
@@ -37,10 +37,10 @@ class OAuth2Utils {
     return qsList.join('&');
   }
 
-  static String addParamsToUrl(String url, Map params) {
+  static Uri addParamsToUrl(Uri url, Map params) {
     var qs = params2qs(params);
 
-    if (qs != null && qs.isNotEmpty) url = url + '?' + qs;
+    if (qs != null && qs.isNotEmpty) url = Uri.parse(url.toString() + '?' + qs);
 
     return url;
   }

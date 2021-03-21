@@ -32,13 +32,13 @@ import 'package:random_string/random_string.dart';
 ///   </intent-filter>
 /// </activity>
 class OAuth2Client {
-  String redirectUri;
+  Uri redirectUri;
   String customUriScheme;
 
-  String tokenUrl;
-  String? refreshUrl;
-  String? revokeUrl;
-  String authorizeUrl;
+  Uri tokenUrl;
+  Uri? refreshUrl;
+  Uri? revokeUrl;
+  Uri authorizeUrl;
 
   Map<String, String>? _accessTokenRequestHeaders;
 
@@ -159,12 +159,12 @@ class OAuth2Client {
 
     if (scopes != null) params['scope'] = scopes.map((s) => s.trim()).join('+');
 
-    var response = await (_performAuthorizedRequest(
+    var response = await _performAuthorizedRequest(
         url: tokenUrl,
         clientId: clientId,
         clientSecret: clientSecret,
         params: params,
-        httpClient: httpClient) as FutureOr<Response>);
+        httpClient: httpClient);
 
     return AccessTokenResponse.fromHttpResponse(response,
         requestedScopes: scopes);
@@ -217,13 +217,13 @@ class OAuth2Client {
         codeVerifier: codeVerifier,
         customParams: customParams);
 
-    var response = await (_performAuthorizedRequest(
+    var response = await _performAuthorizedRequest(
         url: tokenUrl,
         clientId: clientId,
         clientSecret: clientSecret,
         params: params,
         headers: _accessTokenRequestHeaders,
-        httpClient: httpClient) as FutureOr<Response>);
+        httpClient: httpClient);
 
     return AccessTokenResponse.fromHttpResponse(response,
         requestedScopes: scopes);
@@ -234,12 +234,12 @@ class OAuth2Client {
       {httpClient, String? clientId, String? clientSecret}) async {
     final Map params = getRefreshUrlParams(refreshToken: refreshToken);
 
-    var response = await (_performAuthorizedRequest(
+    var response = await _performAuthorizedRequest(
         url: _getRefreshUrl(),
         clientId: clientId,
         clientSecret: clientSecret,
         params: params,
-        httpClient: httpClient) as FutureOr<Response>);
+        httpClient: httpClient);
 
     return AccessTokenResponse.fromHttpResponse(response);
   }
@@ -274,10 +274,10 @@ class OAuth2Client {
   }
 
   /// Generates the url to be used for fetching the authorization code.
-  String getAuthorizeUrl(
+  Uri getAuthorizeUrl(
       {required String? clientId,
       String responseType = 'code',
-      String? redirectUri,
+      Uri? redirectUri,
       List<String>? scopes,
       bool enableState = true,
       String? state,
@@ -288,7 +288,7 @@ class OAuth2Client {
       'client_id': clientId
     };
 
-    if (redirectUri != null && redirectUri.isNotEmpty) {
+    if (redirectUri != null) {
       params['redirect_uri'] = redirectUri;
     }
 
@@ -313,7 +313,7 @@ class OAuth2Client {
   /// Returns the parameters needed for the authorization code request
   Map<String, dynamic> getTokenUrlParams(
       {required String? code,
-      String? redirectUri,
+      Uri? redirectUri,
       String? codeVerifier,
       Map<String, dynamic>? customParams}) {
     final params = <String, dynamic>{
@@ -321,7 +321,7 @@ class OAuth2Client {
       'code': code
     };
 
-    if (redirectUri != null && redirectUri.isNotEmpty) {
+    if (redirectUri != null) {
       params['redirect_uri'] = redirectUri;
     }
 
@@ -348,7 +348,7 @@ class OAuth2Client {
   /// Performs a post request to the specified [url],
   /// adding authentication credentials as described here: https://tools.ietf.org/html/rfc6749#section-2.3
   Future<http.Response?> _performAuthorizedRequest(
-      {required String url,
+      {required Uri url,
       required String? clientId,
       String? clientSecret,
       Map? params,
@@ -443,7 +443,7 @@ class OAuth2Client {
     return resp;
   }
 
-  String _getRefreshUrl() {
+  Uri _getRefreshUrl() {
     return refreshUrl ?? tokenUrl;
   }
 

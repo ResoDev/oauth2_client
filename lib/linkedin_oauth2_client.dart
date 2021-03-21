@@ -9,8 +9,10 @@ class LinkedInOAuth2Client extends OAuth2Client {
   LinkedInOAuth2Client(
       {required String redirectUri, required String customUriScheme})
       : super(
-            authorizeUrl: 'https://www.linkedin.com/oauth/v2/authorization',
-            tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
-            redirectUri: redirectUri,
+            authorizeUrl:
+                Uri.parse('https://www.linkedin.com/oauth/v2/authorization'),
+            tokenUrl:
+                Uri.parse('https://www.linkedin.com/oauth/v2/accessToken'),
+            redirectUri: Uri.parse(redirectUri),
             customUriScheme: customUriScheme);
 }

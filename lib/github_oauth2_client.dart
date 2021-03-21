@@ -9,9 +9,9 @@ class GitHubOAuth2Client extends OAuth2Client {
   GitHubOAuth2Client(
       {required String redirectUri, required String customUriScheme})
       : super(
-            authorizeUrl: 'https://github.com/login/oauth/authorize',
-            tokenUrl: 'https://github.com/login/oauth/access_token',
-            redirectUri: redirectUri,
+            authorizeUrl: Uri.parse('https://github.com/login/oauth/authorize'),
+            tokenUrl: Uri.parse('https://github.com/login/oauth/access_token'),
+            redirectUri: Uri.parse(redirectUri),
             customUriScheme: customUriScheme) {
     accessTokenRequestHeaders = {'Accept': 'application/json'};
   }
