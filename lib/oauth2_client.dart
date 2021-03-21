@@ -74,7 +74,7 @@ class OAuth2Client {
         scopes: scopes,
         enableState: enableState,
         state: state,
-        redirectUri: redirectUri);
+        redirectUri: redirectUri.toString());
 
     // Present the dialog to the user
     final result = await webAuthClient.authenticate(
@@ -188,7 +188,7 @@ class OAuth2Client {
 
     final authorizeUrl = getAuthorizeUrl(
         clientId: clientId,
-        redirectUri: redirectUri,
+        redirectUri: redirectUri.toString(),
         scopes: scopes,
         enableState: enableState,
         state: state,
@@ -213,7 +213,7 @@ class OAuth2Client {
       httpClient}) async {
     final params = getTokenUrlParams(
         code: code,
-        redirectUri: redirectUri,
+        redirectUri: redirectUri.toString(),
         codeVerifier: codeVerifier,
         customParams: customParams);
 
@@ -277,7 +277,7 @@ class OAuth2Client {
   Uri getAuthorizeUrl(
       {required String? clientId,
       String responseType = 'code',
-      Uri? redirectUri,
+      String? redirectUri,
       List<String>? scopes,
       bool enableState = true,
       String? state,
@@ -288,7 +288,7 @@ class OAuth2Client {
       'client_id': clientId
     };
 
-    if (redirectUri != null) {
+    if (redirectUri != null && redirectUri.isNotEmpty) {
       params['redirect_uri'] = redirectUri;
     }
 
@@ -313,7 +313,7 @@ class OAuth2Client {
   /// Returns the parameters needed for the authorization code request
   Map<String, dynamic> getTokenUrlParams(
       {required String? code,
-      Uri? redirectUri,
+      String? redirectUri,
       String? codeVerifier,
       Map<String, dynamic>? customParams}) {
     final params = <String, dynamic>{
@@ -321,7 +321,7 @@ class OAuth2Client {
       'code': code
     };
 
-    if (redirectUri != null) {
+    if (redirectUri != null && redirectUri.isNotEmpty) {
       params['redirect_uri'] = redirectUri;
     }
 
